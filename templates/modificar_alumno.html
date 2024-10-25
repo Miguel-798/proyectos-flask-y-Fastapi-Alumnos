@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <h1 style="color: white;">Modificando Alumnos...</h1>
+        <div class="col-md-6 offser-md-3">
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                    {% if mensajes %}
+                        {% for categoria, mensaje in mensajes %}
+                            <div class="alert alert-{{ categoria }}">
+                                {{ mensaje }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+            {% endwith %}
+            <div class="card card-body mt-4">
+                <!--Tu formulario aquí -->
+                <form action="{{ url_for('modifica') }}" method="POST">
+                    <div class="form-group">
+                        <label for="dni">DNI del Alumno a modificar</label>
+                        <input type="text" id="dni" name="dni" placeholder="Ingrese el DNI" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success" name="buscar" value="buscar">Consultar alumno</button>
+                    </div>
+                </form>
+            </div>
+            {% if alumno %}
+                <div class="card card-body" style="margin-top: 20px;">
+                    <h4>Datos del Alumno</h4>
+                    <form action="{{ url_for('modifica') }}" method="POST">
+                        <input type="hidden" id="alumnoid" name="alumnoid" value="{{ alumno['AlumnoID'] }}" readonly>
+                        <div class="form-group">
+                            <label for="dni">DNI</label>
+                            <input type="text" id="dni" name="dni" value="{{alumno['AlumnoDNI']}}" class="form-control" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="apellido">APELLIDO</label>
+                            <input type="text" id="apellido" name="apellido" value="{{alumno['Apellido']}}" class="form-control">
+                        </div>
+                        
+    
+                        <div class="form-group">
+                            <label for="nombre">NOMBRE</label>
+                            <input type="text" id="nombre" name="nombre" value="{{alumno['Nombre']}}" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fecha">FECHA NACIMIENTO</label>
+                            <input type="text" id="fecha" name="fecha" value="{{alumno['FechaNacimiento']}}" class="form-control">
+                          </div>
+    
+                        <div class="form-group">
+                            <label for="email">EMAIL</label>
+                            <input type="text" id="email" name="email" value="{{alumno['Email']}}" class="form-control">
+                          </div>
+    
+                        <div class="form-group">
+                            <label for="telefono">TELEFONO</label>
+                            <input type="text" id="telefono" name="telefono" value="{{alumno['Telefono']}}" class="form-control">
+                        </div>
+                        <div class="form-group" style="margin-top: 6px;">
+                            <button type="submit" class="btn btn-success" name="modificar" value="modificar">Modificar</button>
+                            <button type="submit" class="btn btn-success" name="eliminar" value="eliminar">Eliminar</button>
+                        </div>
+    
+                    </form>
+
+                </div>
+            {% endif %}        
+        </div>
+    </div>
+</div>
+{% endblock %}
