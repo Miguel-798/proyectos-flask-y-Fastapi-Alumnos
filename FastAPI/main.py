@@ -3,6 +3,7 @@ from routers import products, jwt_auth_users, basic_auth_users, users_db, alumno
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from ratelimit import limits, sleep_and_retry
 import requests
 import redis
 import json
@@ -50,6 +51,19 @@ async def root():
 async def root():
     return {"message": "Hola FastAPI"}
 
+
+FIFTEEN_MINUTES = 900
+
+
+@limits(calls=15, period=FIFTEEN_MINUTES)
+def call_api(url):
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        raise Exception('API response: {}'.format(response.status_code))
+    return response.json()
+
+
 @app.post("/weather")
 async def read_clima(clima: CityWeather):
     cache = rd.get(clima.ciudad)
@@ -58,19 +72,22 @@ async def read_clima(clima: CityWeather):
         return json.loads(cache)
     else:
         print("cache miss")
-        r = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={clima.ciudad},{clima.paisAbv}&APPID=dad390e2ad4a9ec83bf95456eb0f1680") #dejo aqui mi api_key :P
-        if r.json()['cod'] == "404":
+        r = call_api(f"https://api.openweathermap.org/data/2.5/weather?q={clima.ciudad},{clima.paisAbv}&APPID=dad390e2ad4a9ec83bf95456eb0f1680") #dejo aqui mi api_key del clima :P
+        if r['cod'] == 404:
             f = {"No city found"}
             rd.set(clima.ciudad, "No city found")
-            rd.expire(clima.ciudad, 10)
+            rd.expire(clima.ciudad, 1)
             return f
+        elif r['cod'] != 200:
+            raise Exception('API response: {}'.format(r['cod']))
+            
         else:
-            weather = r.json()['weather'][0]['main']
-            temp = round(r.json()['main']['temp'])
+            weather = r['weather'][0]['main']
+            temp = round(r['main']['temp'])
             f = {"message": f"En {clima.ciudad} el clima es: {weather}, y La temperatura es de: {temp}F"}
             n = json.dumps(f)
             rd.set(clima.ciudad, n)
-            rd.expire(clima.ciudad, 10)
+            rd.expire(clima.ciudad, 1)
             return f
 
 # Solicitud weather pero con path
@@ -82,15 +99,18 @@ async def read_clima(ciudad: str, pais: str):
         return json.loads(cache)
     else:
         print("cache miss")
-        r = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={ciudad},{pais}&APPID=dad390e2ad4a9ec83bf95456eb0f1680")
-        if r.json()['cod'] == "404":
+        r = call_api(f"https://api.openweathermap.org/data/2.5/weather?q={ciudad},{pais}&APPID=dad390e2ad4a9ec83bf95456eb0f1680") #dejo aqui mi api_key del clima :P
+        if r['cod'] == 404:
             f = {"No city found"}
             rd.set(ciudad, "No city found")
             rd.expire(ciudad, 10)
             return f
+        elif r['cod'] != 200:
+            raise Exception('API response: {}'.format(r['cod']))
+            
         else:
-            weather = r.json()['weather'][0]['main']
-            temp = round(r.json()['main']['temp'])
+            weather = r['weather'][0]['main']
+            temp = round(r['main']['temp'])
             f = {"message": f"En {ciudad} el clima es: {weather}, y La temperatura es de: {temp}F"}
             n = json.dumps(f)
             rd.set(ciudad, n)

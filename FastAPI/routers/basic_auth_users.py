@@ -18,6 +18,10 @@ class User(BaseModel):
 class UserDB(User):
     password: str
 
+#class form(BaseModel):
+#    username: str
+#    password: str
+
 users_db = {
     "miguel": {
         "username":  "miguel",
