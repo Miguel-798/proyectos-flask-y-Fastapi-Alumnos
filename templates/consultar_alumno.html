@@ -15,7 +15,7 @@
             {% endwith %}
             <div class="card card-body mt-4">
                 <!--Tu formulario aquí -->
-                <form action="{{ url_for('consulta') }}" method="POST">
+                <form action="{{ url_for('alumnos.consulta') }}" method="POST">
                     <div class="form-group">
                         <label for="dni">DNI del Alumno a consultar</label>
                         <input type="text" id="dni" name="dni" placeholder="Ingrese el DNI" class="form-control">

@@ -31,8 +31,8 @@
                     <td>{{user['Nombre']}}</td>
                     <td>{{user['Email']}}</td>
                     <td>
-                        <a href="{{ url_for('modifica', alumnoid=user['AlumnoID']) }}" class="btn btn-danger">Modificar</a>
-                        <a href="{{ url_for('eliminarAlumnos', id=user['AlumnoID']) }}" class="btn btn-danger">Eliminar</a>
+                        <a href="{{ url_for('alumnos.modifica', alumnoid=user['AlumnoID']) }}" class="btn btn-danger">Modificar</a>
+                        <a href="{{ url_for('alumnos.eliminarAlumnos', id=user['AlumnoID']) }}" class="btn btn-danger">Eliminar</a>
                     </td>
                 </tr>
                 {% endfor %}

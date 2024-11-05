@@ -15,7 +15,7 @@
             {% endwith %}
             <div class="card card-body mt-4">
                 <!--Tu formulario aquí -->
-                <form action="{{ url_for('modifica') }}" method="POST">
+                <form action="{{ url_for('alumnos.modifica') }}" method="POST">
                     <div class="form-group">
                         <label for="dni">DNI del Alumno a modificar</label>
                         <input type="text" id="dni" name="dni" placeholder="Ingrese el DNI" class="form-control">
@@ -28,7 +28,7 @@
             {% if alumno %}
                 <div class="card card-body" style="margin-top: 20px;">
                     <h4>Datos del Alumno</h4>
-                    <form action="{{ url_for('modifica') }}" method="POST">
+                    <form action="{{ url_for('alumnos.modifica') }}" method="POST">
                         <input type="hidden" id="alumnoid" name="alumnoid" value="{{ alumno['AlumnoID'] }}" readonly>
                         <div class="form-group">
                             <label for="dni">DNI</label>
